@@ -1,9 +1,36 @@
 import { ContentCreatorSvg } from '@/components/ContentCreatorSvg'
 import { Header } from '@/components/Header'
 import * as Input from '@/components/Input'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Sparkle } from '@phosphor-icons/react'
+import { useRouter } from 'next/router'
+import { Controller, useForm } from 'react-hook-form'
+import { z } from 'zod'
+
+const typeBlogThemeFormSchema = z.object({
+  theme: z
+    .string({ required_error: 'Por favor digite o tema' })
+    .min(5, 'O tema precisa ter no mínimo 5 caracteres')
+    .max(60, 'O tema pode ter no máximo 60 caracteres'),
+})
+
+type TypeBlogThemeFormSchemaInputs = z.input<typeof typeBlogThemeFormSchema>
 
 export default function Home() {
+  const router = useRouter()
+
+  const { handleSubmit, register, control } =
+    useForm<TypeBlogThemeFormSchemaInputs>({
+      resolver: zodResolver(typeBlogThemeFormSchema),
+      defaultValues: {
+        theme: '',
+      },
+    })
+
+  const handleGenerateBlog = async (data: TypeBlogThemeFormSchemaInputs) => {
+    router.push(`/blog-creation?blogTheme=${data.theme}`)
+  }
+
   return (
     <div>
       <Header />
@@ -20,12 +47,40 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="mt-12 flex gap-4">
-              <Input.Container className="flex-1">
-                <Input.Control placeholder="Digite o tema do blog" />
-              </Input.Container>
+            <form
+              className="mt-12 flex gap-4"
+              onSubmit={handleSubmit(handleGenerateBlog)}
+            >
+              <Controller
+                control={control}
+                name="theme"
+                render={({ field, fieldState }) => {
+                  return (
+                    <Input.Root className="flex-1">
+                      <Input.Container className="flex-1">
+                        <Input.Control
+                          placeholder="Digite o tema do blog"
+                          value={field.value}
+                          onChange={(event) => {
+                            const inputValue = event.target.value
+                            field.onChange(inputValue)
+                          }}
+                        />
+                      </Input.Container>
+                      {fieldState.error && (
+                        <Input.Hint className="text-red-500 absolute">
+                          {fieldState.error.message}
+                        </Input.Hint>
+                      )}
+                    </Input.Root>
+                  )
+                }}
+              />
 
-              <button className="bg-primary-600 flex items-center justify-center py-3 px-5 rounded-lg gap-2 hover:bg-primary-700 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 outline-none">
+              <button
+                className="bg-primary-600 flex items-center justify-center py-3 px-5 rounded-lg gap-2 hover:bg-primary-700 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 outline-none"
+                type="submit"
+              >
                 <span className="text-white font-semibold">Gerar blog</span>
                 <Sparkle
                   className="text-white text-base"
@@ -33,7 +88,7 @@ export default function Home() {
                   weight="fill"
                 />
               </button>
-            </div>
+            </form>
           </div>
           <div>
             <ContentCreatorSvg />

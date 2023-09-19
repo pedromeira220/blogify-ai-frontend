@@ -11,9 +11,14 @@ type Color = 'purple' | 'orange' | 'blue' | 'green' | 'yellow'
 type SelectItemProps = {
   value: string
   prefix: Color | 'ask-ai'
+  displayText: string
 }
 
-const SelectItem: React.FC<SelectItemProps> = ({ value, prefix }) => {
+const SelectItem: React.FC<SelectItemProps> = ({
+  value,
+  prefix,
+  displayText,
+}) => {
   const renderPrefix = () => {
     switch (prefix) {
       case 'purple':
@@ -48,7 +53,7 @@ const SelectItem: React.FC<SelectItemProps> = ({ value, prefix }) => {
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-2">
           {renderPrefix()}
-          <Select.ItemText>{value}</Select.ItemText>
+          <Select.ItemText>{displayText}</Select.ItemText>
         </div>
         <Select.ItemIndicator className="text-primary-600">
           <Check weight="bold" />
@@ -58,8 +63,21 @@ const SelectItem: React.FC<SelectItemProps> = ({ value, prefix }) => {
   )
 }
 
-export const SelectInput: React.FC = () => (
-  <Select.Root>
+interface SelectInput {
+  onValueChange: (value: string) => void
+  value: string
+}
+
+export const SelectInput: React.FC<SelectInput> = ({
+  onValueChange,
+  value,
+}) => (
+  <Select.Root
+    value={value}
+    onValueChange={(value) => {
+      onValueChange(value)
+    }}
+  >
     <Select.Trigger className="flex items-center justify-between rounded-lg border border-zinc-300 px-3 py-2 shadow-sm outline-none data-[placeholder]:text-gray-500 w-full">
       <Select.Value placeholder="Selecione a cor primária" />
       <Select.Icon className="text-gray-500">
@@ -74,12 +92,16 @@ export const SelectInput: React.FC = () => (
         </Select.ScrollUpButton>
 
         <Select.Viewport className="py-3">
-          <SelectItem value="Roxo" prefix="purple" />
-          <SelectItem value="Laranja" prefix="orange" />
-          <SelectItem value="Azul escuro" prefix="blue" />
-          <SelectItem value="Verde" prefix="green" />
-          <SelectItem value="Amarelo" prefix="yellow" />
-          <SelectItem value="Deixe a IA escolher" prefix="ask-ai" />
+          <SelectItem displayText="Roxo" prefix="purple" value="PURPLE" />
+          <SelectItem displayText="Laranja" prefix="orange" value="ORANGE" />
+          <SelectItem displayText="Azul escuro" prefix="blue" value="BLUE" />
+          <SelectItem displayText="Verde" prefix="green" value="GREEN" />
+          <SelectItem displayText="Amarelo" prefix="yellow" value="YELLOW" />
+          <SelectItem
+            displayText="Deixe a IA escolher"
+            prefix="ask-ai"
+            value="ASK_AI"
+          />
         </Select.Viewport>
         <Select.ScrollDownButton className="flex items-center justify-center h-[25px] bg-white text-violet11 cursor-default">
           <ArrowDown />
