@@ -1,40 +1,24 @@
 import { BlogPostCard } from '@/components/BlogPostCard'
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
-import { Blog as BlogModel } from '@/models/blog.model'
+import { BlogContext } from '@/contexts/blog.context'
 import { Publication } from '@/models/publications.model'
 import { AxiosError } from 'axios'
 import { useRouter } from 'next/router'
+import { useContext, useEffect } from 'react'
 import { useQuery } from 'react-query'
-import { blogService } from '../services/blogs.service'
 import { publicationsService } from '../services/publications.service'
 
 export default function Blog() {
+  const { blogData, setBlogSlug } = useContext(BlogContext)
+
   const router = useRouter()
-  const blogSlug = router.query.blogSlug
-
-  const fetchBlog = async () => {
-    if (typeof blogSlug !== 'string') {
-      return undefined
-    }
-
-    return blogService
-      .getBySlug({
-        params: {
-          path: {
-            blogSlug,
-          },
-        },
-      })
-      .then((response) => {
-        return BlogModel.createFromDTO(response.data.data)
-      })
-  }
+  const blogSlugFromQueryParams = router.query.blogSlug
 
   const fetchPublicationsFromBlog = async () => {
-    console.log('> blogSlug', blogSlug)
+    console.log('> blogSlugFromQueryParams', blogSlugFromQueryParams)
 
-    if (typeof blogSlug !== 'string') {
+    if (typeof blogSlugFromQueryParams !== 'string') {
       return undefined
     }
 
@@ -42,7 +26,7 @@ export default function Blog() {
       .getPublicationsFromBlog({
         params: {
           path: {
-            blogSlug,
+            blogSlug: blogSlugFromQueryParams,
           },
         },
       })
@@ -60,12 +44,16 @@ export default function Blog() {
       })
   }
 
-  const { data: blogData } = useQuery(['blog', blogSlug], () => fetchBlog())
-  const { data: publications } = useQuery(['publications', blogSlug], () =>
-    fetchPublicationsFromBlog(),
+  const { data: publications } = useQuery(
+    ['publications', blogSlugFromQueryParams],
+    () => fetchPublicationsFromBlog(),
   )
 
-  console.log('> publications', publications)
+  useEffect(() => {
+    if (typeof blogSlugFromQueryParams === 'string') {
+      setBlogSlug(blogSlugFromQueryParams)
+    }
+  }, [blogSlugFromQueryParams, setBlogSlug])
 
   return (
     <div>
