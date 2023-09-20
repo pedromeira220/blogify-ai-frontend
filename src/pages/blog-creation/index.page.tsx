@@ -1,7 +1,6 @@
 import { Header } from '@/components/Header'
 import * as Input from '@/components/Input'
 import { SelectInput } from '@/components/Select'
-import { SpeedTestSvg } from '@/components/SpeedTestSvg'
 import * as TextArea from '@/components/TextArea'
 import { WhiteSpace } from '@/components/WhiteSpace'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -11,6 +10,8 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { blogService } from '../services/blogs.service'
+import { LoadingScreen } from './components/loading-screen'
 
 const generateBlogFormSchema = z.object({
   theme: z
@@ -50,7 +51,7 @@ export default function BlogCreation() {
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const { handleSubmit, setValue, control } =
+  const { handleSubmit, setValue, control, watch } =
     useForm<GenerateBlogFormSchemaInputs>({
       resolver: zodResolver(generateBlogFormSchema),
       defaultValues: {
@@ -62,10 +63,24 @@ export default function BlogCreation() {
     })
 
   const handleGenerateBlog = async (data: GenerateBlogFormSchemaInputs) => {
-    console.log('> data', data)
-
-    setIsLoading(true)
+    return blogService
+      .generate({
+        params: {
+          body: {
+            description: data.description,
+            name: data.name,
+            primaryColor: data.primaryColor,
+            slug: data.slug,
+            theme: data.theme,
+          },
+        },
+      })
+      .then(() => {
+        setIsLoading(true)
+      })
   }
+
+  const blogSlug = watch('slug')
 
   useEffect(() => {
     const blogThemeFromURL = router.query.blogTheme
@@ -276,28 +291,7 @@ export default function BlogCreation() {
           </form>
         </main>
       ) : (
-        <main className="w-full mt-16 h-full">
-          <div className="max-w-6xl mx-auto px-8">
-            <div className="grid grid-cols-2 gap-8">
-              <div className="flex justify-center flex-col gap-6">
-                <div className="flex flex-col gap-3">
-                  <span className="text-primary-700 font-semibold text-base">
-                    Carregando...
-                  </span>
-                  <h1 className="text-gray-900 font-semibold text-6xl">
-                    Estamos criando o blog para você
-                  </h1>
-                </div>
-                <p className="text-gray-600 text-xl">
-                  Aguarde alguns instantes e logo seu blog inteiro estará pronto
-                </p>
-              </div>
-              <div>
-                <SpeedTestSvg />
-              </div>
-            </div>
-          </div>
-        </main>
+        <LoadingScreen blogSlug={blogSlug} />
       )}
     </div>
   )

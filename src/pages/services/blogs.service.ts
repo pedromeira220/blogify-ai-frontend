@@ -16,6 +16,23 @@ const getBySlug = async ({
   return api.get(`/blogs/${params.path.blogSlug}`)
 }
 
+interface GenerateRequest {
+  params: {
+    body: {
+      theme: string
+      description: string
+      name: string
+      slug: string
+      primaryColor: 'PURPLE' | 'ORANGE' | 'BLUE' | 'GREEN' | 'YELLOW' | 'ASK_AI'
+    }
+  }
+}
+
+const generate = async ({ params }: GenerateRequest) => {
+  return api.post('/blogs', params.body)
+}
+
 export const blogService = {
   getBySlug,
+  generate,
 }

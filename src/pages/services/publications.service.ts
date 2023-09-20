@@ -19,6 +19,21 @@ const getPublicationsFromBlog = async ({
   return api.get(`/publications/${params.path.blogSlug}`)
 }
 
+interface IsPublicationsFromBlogReadyRequest {
+  params: {
+    path: {
+      blogSlug: string
+    }
+  }
+}
+
+const isPublicationsFromBlogReady = async ({
+  params,
+}: IsPublicationsFromBlogReadyRequest): ApiResponse<boolean> => {
+  return api.get(`publications/blogs/${params.path.blogSlug}/ready`)
+}
+
 export const publicationsService = {
   getPublicationsFromBlog,
+  isPublicationsFromBlogReady,
 }
