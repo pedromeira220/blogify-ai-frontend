@@ -1,12 +1,24 @@
+import { Blog } from '@/models/blog.model'
 import { Publication } from '@/models/publications.model'
 import { ArrowUpRight } from '@phosphor-icons/react'
+import { useRouter } from 'next/router'
 import React from 'react'
 
 interface BlogPostCardProps {
   publication: Publication
+  blog: Blog | undefined
 }
 
-export const BlogPostCard: React.FC<BlogPostCardProps> = ({ publication }) => {
+export const BlogPostCard: React.FC<BlogPostCardProps> = ({
+  publication,
+  blog,
+}) => {
+  const router = useRouter()
+
+  const handleReadPostClick = async () => {
+    router.push(`/blog/${blog?.slug}/${publication.slug}`)
+  }
+
   return (
     <div>
       <img
@@ -20,10 +32,15 @@ export const BlogPostCard: React.FC<BlogPostCardProps> = ({ publication }) => {
           </h3>
           <p className="text-gray-600">{publication.subtitle}</p>
         </div>
-        <a href="" className="flex items-center gap-2 text-primary-700">
+        <button
+          className="flex items-center gap-2 text-primary-700"
+          onClick={() => {
+            handleReadPostClick()
+          }}
+        >
           <span className="font-semibold">Read post</span>
           <ArrowUpRight weight="bold" size={20} />
-        </a>
+        </button>
       </div>
     </div>
   )

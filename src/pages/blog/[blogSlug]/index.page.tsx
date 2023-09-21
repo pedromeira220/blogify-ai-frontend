@@ -7,7 +7,7 @@ import { AxiosError } from 'axios'
 import { useRouter } from 'next/router'
 import { useContext, useEffect } from 'react'
 import { useQuery } from 'react-query'
-import { publicationsService } from '../services/publications.service'
+import { publicationsService } from '../../services/publications.service'
 
 export default function Blog() {
   const { blogData, setBlogSlug } = useContext(BlogContext)
@@ -86,6 +86,7 @@ export default function Blog() {
                       <BlogPostCard
                         key={publication.id}
                         publication={publication}
+                        blog={blogData}
                       />
                     )
                   })}

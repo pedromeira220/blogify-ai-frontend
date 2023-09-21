@@ -1,12 +1,60 @@
 import { Footer } from '@/components/Footer'
 import { Logo } from '@/components/Logo'
 import { WhiteSpace } from '@/components/WhiteSpace'
+import { BlogContext } from '@/contexts/blog.context'
+import { Publication } from '@/models/publications.model'
+import { publicationsService } from '@/pages/services/publications.service'
+import { useRouter } from 'next/router'
+import { useContext, useEffect } from 'react'
+import { useQuery } from 'react-query'
 import { Heading } from './components/Heading'
 import { Paragraph } from './components/Paragraph'
 
 // paragraph
 
 export default function BlogPost() {
+  const { blogData, setBlogSlug } = useContext(BlogContext)
+
+  const router = useRouter()
+  const blogSlugFromQueryParams = router.query.blogSlug
+  const publicationSlugFromQueryParams = router.query.publicationSlug
+
+  const fetchPublication = async () => {
+    if (typeof publicationSlugFromQueryParams !== 'string') {
+      return undefined
+    }
+
+    if (typeof blogSlugFromQueryParams !== 'string') {
+      return undefined
+    }
+
+    return publicationsService
+      .getPublication({
+        params: {
+          path: {
+            blogSlug: blogSlugFromQueryParams,
+            publicationSlug: publicationSlugFromQueryParams,
+          },
+        },
+      })
+      .then((response) => {
+        return Publication.createFromDTO(response.data.data)
+      })
+      .catch(() => {
+        // TODO: fazer algo quando der erro ou quando a publicação não for encontrada
+      })
+  }
+
+  const { data: publicationData } = useQuery(
+    ['publication', publicationSlugFromQueryParams],
+    () => fetchPublication(),
+  )
+
+  useEffect(() => {
+    if (typeof blogSlugFromQueryParams === 'string') {
+      setBlogSlug(blogSlugFromQueryParams)
+    }
+  }, [blogSlugFromQueryParams, setBlogSlug])
   return (
     <div>
       <header className="w-full">
@@ -18,16 +66,15 @@ export default function BlogPost() {
         <div className="grid grid-cols-2 gap-16">
           <div className="flex flex-col gap-6 justify-center pl-28 pr-16">
             <h1 className="text-gray-900 font-semibold text-5xl">
-              Building your API Stack
+              {publicationData?.title}
             </h1>
             <Paragraph className="text-gray-600 text-xl">
-              The rise of RESTful APIs has been met by a rise in tools for
-              creating, testing, and managing them.
+              {publicationData?.subtitle}
             </Paragraph>
           </div>
           <div className="w-full">
             <img
-              src="https://mailrelay.com/wp-content/uploads/2018/03/que-es-un-blog-1.png"
+              src={publicationData?.thumbnail.src}
               className="aspect-square object-cover w-full"
             />
           </div>
