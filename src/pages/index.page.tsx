@@ -35,7 +35,7 @@ export default function Home() {
     <div>
       <Header />
       <main className="w-full mt-16 mb-24">
-        <div className="max-w-6xl mx-auto grid grid-cols-2  items-center px-8">
+        <div className="max-w-6xl mx-auto grid grid-cols-2 items-center px-8">
           <div>
             <div className="flex flex-col gap-6">
               <h1 className="text-gray-900 font-semibold text-5xl">

@@ -3,22 +3,27 @@ import { BlogContext } from '@/contexts/blog.context'
 import { Publication } from '@/models/publications.model'
 import { publicationsService } from '@/pages/services/publications.service'
 import { useRouter } from 'next/router'
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import Loading from 'react-loading'
 import ReactMarkdown from 'react-markdown'
 import { useQuery } from 'react-query'
 import { Heading } from './components/Heading'
 import { Paragraph } from './components/Paragraph'
 
-// paragraph
+type PublicationRequestStatus = 'LOADING' | 'NOT_FOUND' | 'SUCCESS'
 
 export default function BlogPost() {
-  const { blogData, setBlogSlug } = useContext(BlogContext)
+  const { setBlogSlug } = useContext(BlogContext)
+
+  const [publicatioRequestStatus, setPublicationRequestStatus] =
+    useState<PublicationRequestStatus>('LOADING')
 
   const router = useRouter()
   const blogSlugFromQueryParams = router.query.blogSlug
   const publicationSlugFromQueryParams = router.query.publicationSlug
 
   const fetchPublication = async () => {
+    setPublicationRequestStatus('LOADING')
     if (typeof publicationSlugFromQueryParams !== 'string') {
       return undefined
     }
@@ -37,10 +42,12 @@ export default function BlogPost() {
         },
       })
       .then((response) => {
+        setPublicationRequestStatus('SUCCESS')
         return Publication.createFromDTO(response.data.data)
       })
       .catch(() => {
-        // TODO: fazer algo quando der erro ou quando a publicação não for encontrada
+        setPublicationRequestStatus('NOT_FOUND')
+        return undefined
       })
   }
 
@@ -56,87 +63,88 @@ export default function BlogPost() {
   }, [blogSlugFromQueryParams, setBlogSlug])
   return (
     <div>
-      <main className="w-full mb-24">
-        <div className="grid grid-cols-2 h-screen">
-          <div className="flex flex-col gap-6 justify-center pl-28 pr-16 h-full">
-            <h1 className="text-gray-900 font-semibold text-5xl">
-              {publicationData?.title}
-            </h1>
-            <Paragraph className="text-gray-600 text-xl">
-              {publicationData?.subtitle}
-            </Paragraph>
+      {publicationData ? (
+        <main className="w-full mb-24">
+          <div className="grid grid-cols-2 h-screen">
+            <div className="flex flex-col gap-6 justify-center pl-28 pr-16 h-full">
+              <h1 className="text-gray-900 font-semibold text-5xl">
+                {publicationData?.title}
+              </h1>
+              <Paragraph className="text-gray-600 text-xl">
+                {publicationData?.subtitle}
+              </Paragraph>
+            </div>
+            <div className="w-full h-full">
+              <img
+                src={publicationData?.thumbnail.src}
+                className="aspect-square object-cover w-full h-full"
+              />
+            </div>
           </div>
-          <div className="w-full h-full">
-            <img
-              src={publicationData?.thumbnail.src}
-              className="aspect-square object-cover w-full h-full"
-            />
-          </div>
-        </div>
-        <div className="max-w-[45rem] mx-auto mt-24">
-          <ReactMarkdown
-            components={{
-              h1: ({ children }) => {
-                return (
-                  <>
-                    <Heading size="h1">{children}</Heading>
-                    <WhiteSpace size={32} />
-                  </>
-                )
-              },
-              h2: ({ children }) => {
-                return (
-                  <>
-                    <Heading size="h2">{children}</Heading>
-                    <WhiteSpace size={32} />
-                  </>
-                )
-              },
-              h3: ({ children }) => {
-                return (
-                  <>
-                    <Heading size="h3">{children}</Heading>
-                    <WhiteSpace size={32} />
-                  </>
-                )
-              },
-              h4: ({ children }) => {
-                return (
-                  <>
-                    <Heading size="h4">{children}</Heading>
-                    <WhiteSpace size={32} />
-                  </>
-                )
-              },
-              p: ({ children }) => {
-                return (
-                  <>
-                    <Paragraph>{children}</Paragraph>
-                    <WhiteSpace size={32} />
-                  </>
-                )
-              },
-              ul: ({ children }) => {
-                return (
-                  <>
-                    <Paragraph>{children}</Paragraph>
-                    <WhiteSpace size={32} />
-                  </>
-                )
-              },
-              ol: ({ children }) => {
-                return (
-                  <>
-                    <Paragraph>{children}</Paragraph>
-                    <WhiteSpace size={32} />
-                  </>
-                )
-              },
-            }}
-          >
-            {publicationData?.content ?? ''}
-          </ReactMarkdown>
-          {/* 
+          <div className="max-w-[45rem] mx-auto mt-24">
+            <ReactMarkdown
+              components={{
+                h1: ({ children }) => {
+                  return (
+                    <>
+                      <Heading size="h1">{children}</Heading>
+                      <WhiteSpace size={32} />
+                    </>
+                  )
+                },
+                h2: ({ children }) => {
+                  return (
+                    <>
+                      <Heading size="h2">{children}</Heading>
+                      <WhiteSpace size={32} />
+                    </>
+                  )
+                },
+                h3: ({ children }) => {
+                  return (
+                    <>
+                      <Heading size="h3">{children}</Heading>
+                      <WhiteSpace size={32} />
+                    </>
+                  )
+                },
+                h4: ({ children }) => {
+                  return (
+                    <>
+                      <Heading size="h4">{children}</Heading>
+                      <WhiteSpace size={32} />
+                    </>
+                  )
+                },
+                p: ({ children }) => {
+                  return (
+                    <>
+                      <Paragraph>{children}</Paragraph>
+                      <WhiteSpace size={32} />
+                    </>
+                  )
+                },
+                ul: ({ children }) => {
+                  return (
+                    <>
+                      <Paragraph>{children}</Paragraph>
+                      <WhiteSpace size={32} />
+                    </>
+                  )
+                },
+                ol: ({ children }) => {
+                  return (
+                    <>
+                      <Paragraph>{children}</Paragraph>
+                      <WhiteSpace size={32} />
+                    </>
+                  )
+                },
+              }}
+            >
+              {publicationData?.content ?? ''}
+            </ReactMarkdown>
+            {/* 
           <div className="mb-5">
             <Heading>Introduction</Heading>
             <WhiteSpace size={20} />
@@ -240,8 +248,20 @@ export default function BlogPost() {
               molestie aliquet sodales id est ac volutpat.{' '}
             </Paragraph>
           </div> */}
+          </div>
+        </main>
+      ) : (
+        <div className="w-screen h-screen flex justify-center items-center">
+          {publicatioRequestStatus === 'LOADING' ? (
+            <Loading type="spin" color="#1f2937" />
+          ) : (
+            <div className="text-center flex gap-2 flex-col">
+              <Heading>Publicação não encontrada</Heading>
+              <h1 className="text-xl">Tente novamente com outra publicação</h1>
+            </div>
+          )}
         </div>
-      </main>
+      )}
     </div>
   )
 }

@@ -4,10 +4,17 @@ import { blogService } from '@/pages/services/blogs.service'
 import React, { ReactNode, createContext, useState } from 'react'
 import { useQuery } from 'react-query'
 
+type BlogRequestStatus =
+  | 'SUCCESS'
+  | 'INTERNAL_ERROR'
+  | 'BLOG_NOT_FOUND'
+  | 'LOADING'
+
 interface BlogContextType {
   blogData: Blog | undefined
   setBlogSlug: React.Dispatch<React.SetStateAction<string>>
   blogPrimaryColor: PrimaryColorType | undefined
+  blogRequestStatus: BlogRequestStatus
 }
 
 export const BlogContext = createContext({} as BlogContextType)
@@ -20,8 +27,11 @@ export const BlogContextProvider: React.FC<BlogContextProviderProps> = ({
   children,
 }) => {
   const [blogSlug, setBlogSlug] = useState('')
+  const [blogRequestStatus, setBlogRequestStatus] =
+    useState<BlogRequestStatus>('LOADING')
 
   const fetchBlog = async () => {
+    setBlogRequestStatus('LOADING')
     if (typeof blogSlug !== 'string' || !blogSlug) {
       return undefined
     }
@@ -35,7 +45,12 @@ export const BlogContextProvider: React.FC<BlogContextProviderProps> = ({
         },
       })
       .then((response) => {
+        setBlogRequestStatus('SUCCESS')
         return Blog.createFromDTO(response.data.data)
+      })
+      .catch(() => {
+        setBlogRequestStatus('BLOG_NOT_FOUND')
+        return undefined
       })
   }
 
@@ -47,6 +62,7 @@ export const BlogContextProvider: React.FC<BlogContextProviderProps> = ({
         blogData,
         setBlogSlug,
         blogPrimaryColor: blogData?.primaryColor,
+        blogRequestStatus,
       }}
     >
       {children}
