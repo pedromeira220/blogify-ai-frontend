@@ -22,7 +22,7 @@ export const BlogContextProvider: React.FC<BlogContextProviderProps> = ({
   const [blogSlug, setBlogSlug] = useState('')
 
   const fetchBlog = async () => {
-    if (typeof blogSlug !== 'string') {
+    if (typeof blogSlug !== 'string' || !blogSlug) {
       return undefined
     }
 

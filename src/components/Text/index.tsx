@@ -1,4 +1,3 @@
-import { returnTailwindPrimaryColor } from '@/utils/return-tailwind-primary-color'
 import React, { ComponentProps } from 'react'
 import { VariantProps, tv } from 'tailwind-variants'
 
@@ -6,11 +5,11 @@ const text = tv({
   base: 'font-semibold text-base',
   variants: {
     color: {
-      PURPLE: returnTailwindPrimaryColor('PURPLE'),
-      ORANGE: returnTailwindPrimaryColor('ORANGE'),
-      BLUE: returnTailwindPrimaryColor('BLUE'),
-      GREEN: returnTailwindPrimaryColor('GREEN'),
-      YELLOW: returnTailwindPrimaryColor('YELLOW'),
+      PURPLE: 'text-primary-700',
+      ORANGE: 'text-[#FF4405]',
+      BLUE: 'text-blue-700',
+      GREEN: 'text-green-700',
+      YELLOW: 'text-yellow-600',
       BLACK: '',
     },
   },

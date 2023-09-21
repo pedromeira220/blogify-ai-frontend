@@ -80,7 +80,7 @@ export default function BlogPost() {
                 return (
                   <>
                     <Heading size="h1">{children}</Heading>
-                    <WhiteSpace size={48} />
+                    <WhiteSpace size={32} />
                   </>
                 )
               },
@@ -88,7 +88,7 @@ export default function BlogPost() {
                 return (
                   <>
                     <Heading size="h2">{children}</Heading>
-                    <WhiteSpace size={40} />
+                    <WhiteSpace size={32} />
                   </>
                 )
               },
@@ -96,7 +96,7 @@ export default function BlogPost() {
                 return (
                   <>
                     <Heading size="h3">{children}</Heading>
-                    <WhiteSpace size={36} />
+                    <WhiteSpace size={32} />
                   </>
                 )
               },
@@ -104,7 +104,7 @@ export default function BlogPost() {
                 return (
                   <>
                     <Heading size="h4">{children}</Heading>
-                    <WhiteSpace size={36} />
+                    <WhiteSpace size={32} />
                   </>
                 )
               },
@@ -112,7 +112,7 @@ export default function BlogPost() {
                 return (
                   <>
                     <Paragraph>{children}</Paragraph>
-                    <WhiteSpace size={20} />
+                    <WhiteSpace size={32} />
                   </>
                 )
               },
@@ -120,7 +120,7 @@ export default function BlogPost() {
                 return (
                   <>
                     <Paragraph>{children}</Paragraph>
-                    <WhiteSpace size={20} />
+                    <WhiteSpace size={32} />
                   </>
                 )
               },
@@ -128,7 +128,7 @@ export default function BlogPost() {
                 return (
                   <>
                     <Paragraph>{children}</Paragraph>
-                    <WhiteSpace size={20} />
+                    <WhiteSpace size={32} />
                   </>
                 )
               },
