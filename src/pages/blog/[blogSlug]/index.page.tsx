@@ -1,4 +1,5 @@
 import { BlogPostCard } from '@/components/BlogPostCard'
+import { Text } from '@/components/Text'
 import { BlogContext } from '@/contexts/blog.context'
 import { Publication } from '@/models/publications.model'
 import { AxiosError } from 'axios'
@@ -8,14 +9,12 @@ import { useQuery } from 'react-query'
 import { publicationsService } from '../../services/publications.service'
 
 export default function Blog() {
-  const { blogData, setBlogSlug } = useContext(BlogContext)
+  const { blogData, setBlogSlug, blogPrimaryColor } = useContext(BlogContext)
 
   const router = useRouter()
   const blogSlugFromQueryParams = router.query.blogSlug
 
   const fetchPublicationsFromBlog = async () => {
-    console.log('> blogSlugFromQueryParams', blogSlugFromQueryParams)
-
     if (typeof blogSlugFromQueryParams !== 'string') {
       return undefined
     }
@@ -59,9 +58,7 @@ export default function Blog() {
         <div className="max-w-6xl mx-auto px-8">
           <div className="flex flex-col justify-center items-center gap-6">
             <div className="flex flex-col justify-center items-center gap-3">
-              <span className="text-primary-700 font-semibold text-base">
-                Publicações
-              </span>
+              <Text color={blogPrimaryColor}>Publicações</Text>
               <h1 className="font-semibold text-5xl text-gray-900">
                 {blogData?.name}
               </h1>

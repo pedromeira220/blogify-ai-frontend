@@ -13,11 +13,6 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ blogSlug }) => {
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null)
 
   const executeOnInterval = async (intervalId: NodeJS.Timeout) => {
-    console.log(
-      '> Verificando se as publicações já terminaram do blog slug: ',
-      blogSlug,
-    )
-
     return publicationsService
       .isPublicationsFromBlogReady({
         params: {
@@ -28,8 +23,6 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ blogSlug }) => {
       })
       .then((response) => {
         const isReady = response.data.data
-
-        console.log(`> blog com slug ${blogSlug} está pronto: ${isReady}`)
 
         if (isReady) {
           clearInterval(intervalId)

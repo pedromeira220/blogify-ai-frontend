@@ -1,8 +1,12 @@
+import { BlogContext } from '@/contexts/blog.context'
 import { Blog } from '@/models/blog.model'
 import { Publication } from '@/models/publications.model'
+import { returnTailwindPrimaryColor } from '@/utils/return-tailwind-primary-color'
 import { ArrowUpRight } from '@phosphor-icons/react'
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, { useContext } from 'react'
+import { twMerge } from 'tailwind-merge'
+import { Text } from '../Text'
 
 interface BlogPostCardProps {
   publication: Publication
@@ -13,6 +17,8 @@ export const BlogPostCard: React.FC<BlogPostCardProps> = ({
   publication,
   blog,
 }) => {
+  const { blogPrimaryColor } = useContext(BlogContext)
+
   const router = useRouter()
 
   const handleReadPostClick = async () => {
@@ -33,13 +39,17 @@ export const BlogPostCard: React.FC<BlogPostCardProps> = ({
           <p className="text-gray-600">{publication.subtitle}</p>
         </div>
         <button
-          className="flex items-center gap-2 text-primary-700"
+          className={'flex items-center gap-2'}
           onClick={() => {
             handleReadPostClick()
           }}
         >
-          <span className="font-semibold">Read post</span>
-          <ArrowUpRight weight="bold" size={20} />
+          <Text color={blogPrimaryColor}>Read post</Text>
+          <ArrowUpRight
+            weight="bold"
+            size={20}
+            className={twMerge(returnTailwindPrimaryColor(blogPrimaryColor))}
+          />
         </button>
       </div>
     </div>
