@@ -5,8 +5,10 @@ const heading = tv({
   base: 'text-gray-900 font-semibold',
   variants: {
     size: {
+      h1: 'text-4xl',
       h2: 'text-3xl',
       h3: 'text-2xl ',
+      h4: 'text-xl',
     },
   },
   defaultVariants: {

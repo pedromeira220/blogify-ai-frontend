@@ -1,11 +1,10 @@
-import { Footer } from '@/components/Footer'
-import { Logo } from '@/components/Logo'
 import { WhiteSpace } from '@/components/WhiteSpace'
 import { BlogContext } from '@/contexts/blog.context'
 import { Publication } from '@/models/publications.model'
 import { publicationsService } from '@/pages/services/publications.service'
 import { useRouter } from 'next/router'
 import { useContext, useEffect } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { useQuery } from 'react-query'
 import { Heading } from './components/Heading'
 import { Paragraph } from './components/Paragraph'
@@ -57,14 +56,9 @@ export default function BlogPost() {
   }, [blogSlugFromQueryParams, setBlogSlug])
   return (
     <div>
-      <header className="w-full">
-        <div className="py-6 px-28">
-          <Logo />
-        </div>
-      </header>
       <main className="w-full mb-24">
-        <div className="grid grid-cols-2 gap-16">
-          <div className="flex flex-col gap-6 justify-center pl-28 pr-16">
+        <div className="grid grid-cols-2 h-screen">
+          <div className="flex flex-col gap-6 justify-center pl-28 pr-16 h-full">
             <h1 className="text-gray-900 font-semibold text-5xl">
               {publicationData?.title}
             </h1>
@@ -72,14 +66,77 @@ export default function BlogPost() {
               {publicationData?.subtitle}
             </Paragraph>
           </div>
-          <div className="w-full">
+          <div className="w-full h-full">
             <img
               src={publicationData?.thumbnail.src}
-              className="aspect-square object-cover w-full"
+              className="aspect-square object-cover w-full h-full"
             />
           </div>
         </div>
         <div className="max-w-[45rem] mx-auto mt-24">
+          <ReactMarkdown
+            components={{
+              h1: ({ children }) => {
+                return (
+                  <>
+                    <Heading size="h1">{children}</Heading>
+                    <WhiteSpace size={48} />
+                  </>
+                )
+              },
+              h2: ({ children }) => {
+                return (
+                  <>
+                    <Heading size="h2">{children}</Heading>
+                    <WhiteSpace size={40} />
+                  </>
+                )
+              },
+              h3: ({ children }) => {
+                return (
+                  <>
+                    <Heading size="h3">{children}</Heading>
+                    <WhiteSpace size={36} />
+                  </>
+                )
+              },
+              h4: ({ children }) => {
+                return (
+                  <>
+                    <Heading size="h4">{children}</Heading>
+                    <WhiteSpace size={36} />
+                  </>
+                )
+              },
+              p: ({ children }) => {
+                return (
+                  <>
+                    <Paragraph>{children}</Paragraph>
+                    <WhiteSpace size={20} />
+                  </>
+                )
+              },
+              ul: ({ children }) => {
+                return (
+                  <>
+                    <Paragraph>{children}</Paragraph>
+                    <WhiteSpace size={20} />
+                  </>
+                )
+              },
+              ol: ({ children }) => {
+                return (
+                  <>
+                    <Paragraph>{children}</Paragraph>
+                    <WhiteSpace size={20} />
+                  </>
+                )
+              },
+            }}
+          >
+            {publicationData?.content ?? ''}
+          </ReactMarkdown>
+          {/* 
           <div className="mb-5">
             <Heading>Introduction</Heading>
             <WhiteSpace size={20} />
@@ -182,10 +239,9 @@ export default function BlogPost() {
               tristique risus, at donec. In turpis vel et quam imperdiet. Ipsum
               molestie aliquet sodales id est ac volutpat.{' '}
             </Paragraph>
-          </div>
+          </div> */}
         </div>
       </main>
-      <Footer />
     </div>
   )
 }

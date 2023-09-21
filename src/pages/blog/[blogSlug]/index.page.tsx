@@ -1,6 +1,4 @@
 import { BlogPostCard } from '@/components/BlogPostCard'
-import { Footer } from '@/components/Footer'
-import { Header } from '@/components/Header'
 import { BlogContext } from '@/contexts/blog.context'
 import { Publication } from '@/models/publications.model'
 import { AxiosError } from 'axios'
@@ -57,7 +55,6 @@ export default function Blog() {
 
   return (
     <div>
-      <Header />
       <main className="w-full mt-16 mb-24">
         <div className="max-w-6xl mx-auto px-8">
           <div className="flex flex-col justify-center items-center gap-6">
@@ -95,7 +92,6 @@ export default function Blog() {
           </div>
         </div>
       </main>
-      <Footer />
     </div>
   )
 }
